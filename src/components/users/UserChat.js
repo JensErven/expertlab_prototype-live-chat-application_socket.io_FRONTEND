@@ -22,6 +22,15 @@ const UserChat = ({
     // Scroll to the bottom whenever chatHistory changes
     scrollToBottom();
   }, [chatHistory]);
+
+  // Filter chatHistory to show only messages for the selected chat
+  const chatHistoryForSelectedChat = chatHistory.filter(
+    (message) =>
+      (message.sender === selectedUser &&
+        message.receiver === registeredUser) ||
+      (message.sender === registeredUser && message.receiver === selectedUser)
+  );
+
   const handleSendMessage = () => {
     if (messageInput) {
       const message = {
@@ -66,9 +75,9 @@ const UserChat = ({
             ref={chatContainerRef}
             className="overflow-y-scroll w-full flex flex-col p-2 gap-y-1  "
           >
-            {chatHistory.map((message, index) => (
+            {chatHistoryForSelectedChat.map((message, index) => (
               <div
-                className={`flex flex-col relative w-2/3  ${
+                className={`flex flex-col relative w-2/3 ${
                   message.sender === registeredUser ? "self-end" : ""
                 }`}
                 key={index}
@@ -81,8 +90,7 @@ const UserChat = ({
                   <span className="text-slate-400 text-sm">
                     {message.sender === registeredUser
                       ? "(You)"
-                      : message.sender}{" "}
-                    {/* - {message.timestamp} */}
+                      : message.sender}
                   </span>
                 </p>
                 <div
@@ -90,7 +98,7 @@ const UserChat = ({
                     message.sender === registeredUser
                       ? "own-message self-end bg-slate-600"
                       : "others-message bg-purple-500"
-                  }  w-fit rounded-md p-2`}
+                  } w-fit rounded-md p-2`}
                 >
                   <p>{message.message}</p>
                 </div>

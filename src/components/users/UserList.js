@@ -16,13 +16,14 @@ const UserList = ({
     // Convert the searchInput to lowercase for a case-insensitive search
     const searchQuery = searchInput.toLowerCase();
 
-    // Filter the users based on the searchInput
-    const filtered = usersList.filter((user) =>
-      user.toLowerCase().includes(searchQuery)
+    // Filter the users based on the searchInput and exclude the registeredUser
+    const filtered = usersList.filter(
+      (user) =>
+        user.toLowerCase().includes(searchQuery) && user !== registeredUser
     );
 
     setFilteredUsers(filtered);
-  }, [usersList, searchInput]);
+  }, [usersList, searchInput, registeredUser]);
 
   return (
     <div className="h-1/2 flex flex-col gap-2  ">
