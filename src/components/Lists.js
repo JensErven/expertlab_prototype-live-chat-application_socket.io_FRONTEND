@@ -1,10 +1,22 @@
 import React from "react";
 import UserList from "./users/UserList";
 import RoomList from "./rooms/RoomList";
-const Lists = ({ usersList }) => {
+const Lists = ({
+  usersList,
+  registeredUser,
+  setSelectedUser,
+  selectedUser,
+}) => {
   return (
-    <div>
-      <UserList usersList={usersList} />
+    <div className="h-full flex flex-col gap-4">
+      <UserList
+        usersList={usersList}
+        registeredUser={registeredUser}
+        setSelectedUser={setSelectedUser}
+        selectedUser={selectedUser}
+      />
+      <hr className="border-slate-500 border w-full"></hr>
+
       <RoomList />
     </div>
   );
