@@ -1,10 +1,10 @@
 import { io } from "socket.io-client";
 
-const productionURL =
-  "https://expertlab-prototype-live-chat-application-socket-io-backend.vercel.app/";
+const renderBackendURL =
+  "https://live-chat-application-backend-jenserven.onrender.com/";
 const developmentURL = "http://localhost:3001";
 
 const URL =
-  process.env.NODE_ENV === "production" ? productionURL : developmentURL;
+  process.env.NODE_ENV === "production" ? renderBackendURL : developmentURL;
 
 export const socket = io(URL);
