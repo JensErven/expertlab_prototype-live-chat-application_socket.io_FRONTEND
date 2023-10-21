@@ -1,5 +1,5 @@
 import React from "react";
-import { FaUser } from "react-icons/fa";
+import { FaUser, FaComment } from "react-icons/fa";
 
 const UserCard = ({ user, registeredUser, setSelectedUser, selectedUser }) => {
   const handleSelectUser = (user) => {
@@ -11,7 +11,9 @@ const UserCard = ({ user, registeredUser, setSelectedUser, selectedUser }) => {
     <div
       onClick={() => handleSelectUser(user)}
       className={`rounded-md flex justify-between items-center  cursor-pointer relative p-2
-${selectedUser === user ? "bg-purple-400" : "bg-slate-800 "}
+${
+  selectedUser === user ? "bg-purple-500 shadow-md " : "bg-slate-800 shadow-md "
+}
   `}
       // onClick={userInRoom ? handleSelectRoom : undefined}
     >
@@ -26,18 +28,24 @@ ${selectedUser === user ? "bg-purple-400" : "bg-slate-800 "}
         >
           {user}{" "}
           {registeredUser === user ? (
-            <span className="text-slate-500">(You)</span>
+            <span
+              className={`${
+                selectedUser === user ? "text-stone-100" : "text-slate-500"
+              }`}
+            >
+              (You)
+            </span>
           ) : (
             <></>
           )}
         </p>
       </div>
-      {/* <div className=" h-full items-center rounded-md px  flex flex-row relative animate-pulse gap-2">
-        <p className="  bg-cyan-500 rounded-full w-fit px-1 -left-8 top-2 text-white font-bold">
-          150{" "}
+      <div className=" h-full items-center rounded-md px  flex flex-row relative animate-pulse gap-1">
+        <p className="bg-purple-600 rounded-full w-fit px-2 -left-8 top-2 text-white ">
+          75{" "}
         </p>
-        <FaComment size={20} className="fill-slate-500" />
-      </div> */}
+        <FaComment size={20} className="fill-stone-100" />
+      </div>
     </div>
   );
 };

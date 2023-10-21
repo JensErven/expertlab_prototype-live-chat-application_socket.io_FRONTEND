@@ -44,7 +44,7 @@ const UserList = ({
           <FaSearch size={20} className="fill-slate-600" />
         </div>
       </div>
-      <div className="flex flex-col gap-1 overflow-y-scroll">
+      <div className="flex flex-col gap-2 overflow-y-scroll">
         {" "}
         {filteredUsers.map((user) => (
           <UserCard
