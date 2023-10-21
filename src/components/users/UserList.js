@@ -26,7 +26,7 @@ const UserList = ({
   }, [usersList, searchInput, registeredUser]);
 
   return (
-    <div className="h-1/2 flex flex-col gap-2  ">
+    <div className=" flex flex-col gap-2 h-1/2 border-y-2 border-slate-500 py-4 ">
       <div className="flex flex-row gap-4 items-center justify-between">
         {" "}
         <h1>Users</h1>

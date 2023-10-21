@@ -7,9 +7,11 @@ const Lists = ({
   setSelectedUser,
   selectedUser,
   unreadMessages,
+  setIsModalOpen,
+  chatRoomsList,
 }) => {
   return (
-    <div className="h-full flex flex-col gap-4">
+    <div className=" flex flex-col gap-4 h-[90%] ">
       <UserList
         usersList={usersList}
         registeredUser={registeredUser}
@@ -17,9 +19,9 @@ const Lists = ({
         selectedUser={selectedUser}
         unreadMessages={unreadMessages}
       />
-      <hr className="border-slate-500 border w-full"></hr>
+      {/* <hr className="border-slate-500 border w-full"></hr> */}
 
-      <RoomList />
+      <RoomList setIsModalOpen={setIsModalOpen} chatRoomsList={chatRoomsList} />
     </div>
   );
 };

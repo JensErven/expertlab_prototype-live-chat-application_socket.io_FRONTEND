@@ -10,6 +10,7 @@ import "./App.css";
 import SignoutButton from "./components/shared/SignoutButton";
 import UserChat from "./components/users/UserChat";
 import messageReceivedSound from "./assets/new-positive-notice-161930.mp3";
+import CreateRoomModal from "./components/rooms/CreateRoomModal";
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -17,11 +18,13 @@ export default function App() {
   const [registeredUser, setRegisteredUser] = useState(""); // Store the registered username
   const [showChat, setShowChat] = useState(false); // Control chat visibility
   const [usersList, setUsersList] = useState([]); // Store the list of users
+  const [chatRoomsList, setChatRoomsList] = useState([]);
   const [selectedUser, setSelectedUser] = useState();
   const [chatHistory, setChatHistory] = useState([]);
   const [userOrRoomSelected, setUserOrRoomSelected] = useState("user");
   const [unreadMessages, setUnreadMessages] = useState({}); // State for unread message counts
   const messageReceivedAudio = new Audio(messageReceivedSound);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     console.log(chatHistory);
@@ -53,6 +56,12 @@ export default function App() {
       setUsersList(userList);
     }
 
+    function updateChatRoomList(chatRoomList) {
+      console.log("new room");
+      console.log(chatRoomList);
+      setChatRoomsList(chatRoomList);
+    }
+
     // Function to handle incoming messages
     function onMessageReceived({ sender, receiver, message }) {
       // Handle incoming messages and update chat history
@@ -80,6 +89,7 @@ export default function App() {
 
       setChatHistory(history);
     });
+    socket.on("chatRoomList", updateChatRoomList);
 
     return () => {
       socket.off("connect", onConnect);
@@ -88,6 +98,7 @@ export default function App() {
       socket.off("userList", updateUserList);
       socket.off("message", onMessageReceived);
       socket.off("chatHistory");
+      socket.off("chatRoomList", updateChatRoomList);
     };
   }, [
     setSelectedUser,
@@ -95,6 +106,7 @@ export default function App() {
     selectedUser,
     chatHistory,
     unreadMessages,
+    messageReceivedAudio,
   ]);
 
   // Function to handle user registration
@@ -146,25 +158,32 @@ export default function App() {
     <div className="flex flex-row h-screen bg-slate-900 items-center justify-center">
       {showChat && isConnected ? (
         <div className="w-full h-full flex flex-row  ">
-          <div className="bg-slate-700  h-full w-1/3 px-2 py-4 gap-4 flex flex-col">
+          {isModalOpen && (
+            <>
+              <CreateRoomModal setIsModalOpen={setIsModalOpen} />{" "}
+            </>
+          )}
+          <div className="bg-slate-700  h-full w-1/3 px-2 py-4 gap-2 flex flex-col">
             {" "}
-            <div className="flex flex-row justify-between items-center">
+            <div className="flex flex-row justify-between items-center h-[5%]">
               <ConnectionState isConnected={isConnected} />
               <SignoutButton />
             </div>
-            <hr className="border-slate-500 border w-full"></hr>
-            <div>
+            {/* <hr className="border-slate-500 border w-full"></hr> */}
+            <div className="h-[5%]">
               <h2 className="text-white font-bold text-lg capitalize">
                 Hello, {registeredUser}
               </h2>
             </div>
-            <hr className="border-slate-500 border w-full"></hr>
+            {/* <hr className="border-slate-500 border w-full"></hr> */}
             <Lists
               usersList={usersList}
+              chatRoomsList={chatRoomsList}
               registeredUser={registeredUser}
               setSelectedUser={handleSetSelectedUser}
               selectedUser={selectedUser}
               unreadMessages={unreadMessages}
+              setIsModalOpen={setIsModalOpen}
             />
           </div>
           {
