@@ -6,14 +6,18 @@ export function ConnectionManager() {
     socket.connect();
   }
 
-  function disconnect() {
-    socket.disconnect();
-  }
+  // function disconnect() {
+  //   socket.disconnect();
+  // }
 
   return (
     <>
-      <button onClick={connect}>Connect</button>
-      <button onClick={disconnect}>Disconnect</button>
+      <button
+        className="bg-cyan-500 p-2 rounded-md text-white"
+        onClick={connect}
+      >
+        Connect
+      </button>
     </>
   );
 }

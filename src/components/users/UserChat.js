@@ -64,7 +64,7 @@ const UserChat = ({
         <div className="w-full  pb-2 max-h-[90%] min-h-[90%] flex flex-col gap-y-2 justify-end ">
           <div
             ref={chatContainerRef}
-            className="overflow-y-scroll w-full flex flex-col p-2 scroll  "
+            className="overflow-y-scroll w-full flex flex-col p-2 gap-y-1  "
           >
             {chatHistory.map((message, index) => (
               <div
