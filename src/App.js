@@ -9,6 +9,7 @@ import "./tailwind.css";
 import "./App.css";
 import SignoutButton from "./components/shared/SignoutButton";
 import UserChat from "./components/users/UserChat";
+import messageReceivedSound from "./assets/new-positive-notice-161930.mp3";
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -19,6 +20,8 @@ export default function App() {
   const [selectedUser, setSelectedUser] = useState();
   const [chatHistory, setChatHistory] = useState([]);
   const [userOrRoomSelected, setUserOrRoomSelected] = useState("user");
+  const [unreadMessages, setUnreadMessages] = useState({}); // State for unread message counts
+  const messageReceivedAudio = new Audio(messageReceivedSound);
 
   useEffect(() => {
     console.log(chatHistory);
@@ -57,6 +60,15 @@ export default function App() {
         ...prevHistory,
         { sender, receiver, message },
       ]);
+      // Check if the message is from the selected user
+      if (receiver === registeredUser && sender !== selectedUser) {
+        setUnreadMessages((prevUnread) => ({
+          ...prevUnread,
+          [sender]: (prevUnread[sender] || 0) + 1, // Increment unread count
+        }));
+        // Play the message received sound effect
+        messageReceivedAudio.play();
+      }
     }
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
@@ -77,7 +89,13 @@ export default function App() {
       socket.off("message", onMessageReceived);
       socket.off("chatHistory");
     };
-  }, [setSelectedUser, registeredUser, selectedUser, chatHistory]);
+  }, [
+    setSelectedUser,
+    registeredUser,
+    selectedUser,
+    chatHistory,
+    unreadMessages,
+  ]);
 
   // Function to handle user registration
   const handleRegistration = (username) => {
@@ -101,6 +119,15 @@ export default function App() {
     console.log(user);
     setSelectedUser(user);
     setChatHistory([]);
+
+    // Check if there are unread messages for the selected user
+    if (unreadMessages[user]) {
+      // Reset the unread message count to 0 for the selected user
+      setUnreadMessages((prevUnread) => ({
+        ...prevUnread,
+        [user]: 0,
+      }));
+    }
 
     if (user) {
       // Request chat history using WebSocket
@@ -137,6 +164,7 @@ export default function App() {
               registeredUser={registeredUser}
               setSelectedUser={handleSetSelectedUser}
               selectedUser={selectedUser}
+              unreadMessages={unreadMessages}
             />
           </div>
           {

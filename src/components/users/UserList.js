@@ -7,6 +7,7 @@ const UserList = ({
   registeredUser,
   setSelectedUser,
   selectedUser,
+  unreadMessages,
 }) => {
   const [searchInput, setSearchInput] = useState(""); // State to store the search input
   const [filteredUsers, setFilteredUsers] = useState([]); // State to store filtered users
@@ -35,12 +36,12 @@ const UserList = ({
       </div>
       <div className="flex flex-row items-center w-full">
         <input
-          className="bg-slate-800 rounded-l-md  px-4 py-4 text-white h-full w-[80%]"
+          className="bg-slate-800 rounded-l-md  px-4 py-4 text-white h-full w-full"
           placeholder="search user..."
           value={searchInput} // Bind the input value to the searchInput state
           onChange={(e) => setSearchInput(e.target.value)} // Update searchInput on input change
         ></input>
-        <div className="p-2 flex bg-slate-800 rounded-r-md  h-full items-center  w-[20%] justify-center">
+        <div className="p-2 flex bg-slate-800 rounded-r-md  h-full items-center  w-20 justify-center">
           <FaSearch size={20} className="fill-slate-600" />
         </div>
       </div>
@@ -53,6 +54,7 @@ const UserList = ({
             key={user}
             setSelectedUser={setSelectedUser}
             selectedUser={selectedUser}
+            unreadMessages={unreadMessages[user]}
           />
         ))}
       </div>

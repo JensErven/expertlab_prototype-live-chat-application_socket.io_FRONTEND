@@ -106,10 +106,10 @@ const UserChat = ({
               type="text"
               value={messageInput}
               onChange={(e) => setMessageInput(e.target.value)}
-              className="w-[80%] bg-transparent h-full pl-4  rounded-md "
+              className="w-full bg-transparent h-full pl-4  rounded-md "
               placeholder="write a message..."
             ></input>
-            <div className="flex flex-col items-center justify-center w-[20%]">
+            <div className="flex flex-col items-center justify-center w-20">
               {" "}
               <FaSmile
                 size={20}

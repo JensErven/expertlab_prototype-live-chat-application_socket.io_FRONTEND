@@ -6,6 +6,7 @@ const Lists = ({
   registeredUser,
   setSelectedUser,
   selectedUser,
+  unreadMessages,
 }) => {
   return (
     <div className="h-full flex flex-col gap-4">
@@ -14,6 +15,7 @@ const Lists = ({
         registeredUser={registeredUser}
         setSelectedUser={setSelectedUser}
         selectedUser={selectedUser}
+        unreadMessages={unreadMessages}
       />
       <hr className="border-slate-500 border w-full"></hr>
 
