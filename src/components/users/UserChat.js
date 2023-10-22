@@ -1,6 +1,26 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaPaperPlane, FaSmile, FaUserCircle } from "react-icons/fa";
 import { socket } from "../../socket";
+import VoiceToTextButton from "../shared/VoiceToTextButton";
+
+const emojis = [
+  "😀",
+  "😃",
+  "😄",
+  "😁",
+  "😆",
+  "😅",
+  "😂",
+  "🤣",
+  "😊",
+  "😇",
+  "😍",
+  "🥰",
+  "😋",
+  "😎",
+  "😜",
+  "😏",
+];
 
 const UserChat = ({
   selectedUser,
@@ -10,6 +30,7 @@ const UserChat = ({
 }) => {
   const [messageInput, setMessageInput] = useState("");
   const chatContainerRef = useRef(null); // Reference to the chat container element
+  const [isEmojiPickerVisible, setIsEmojiPickerVisible] = useState(false);
 
   // Function to scroll to the bottom of the chat container
   const scrollToBottom = () => {
@@ -52,6 +73,32 @@ const UserChat = ({
       handleSendMessage();
     }
   };
+
+  const handleSpeechResult = (result) => {
+    setMessageInput(result); // Set the recognized speech as the message input
+
+    // Automatically send the message when recognized speech is received
+    if (result.trim() !== "") {
+      const message = {
+        sender: registeredUser,
+        receiver: selectedUser,
+        message: result,
+      };
+      setChatHistory((prevHistory) => [...prevHistory, message]);
+      socket.emit("message", message);
+      setMessageInput(""); // Clear the message input after sending
+    }
+  };
+
+  const toggleEmojiPicker = () => {
+    setIsEmojiPickerVisible((prev) => !prev);
+  };
+
+  const handleEmojiClick = (emoji) => {
+    setMessageInput((prev) => prev + emoji);
+    setIsEmojiPickerVisible(false);
+  };
+
   return (
     <div className="bg-slate-900 p-4 h-screen  flex flex-col gap-4 w-2/3">
       <div className=" flex flex-col gap-2 bg-slate-700 p-4   w-full rounded-md max-h-1/6">
@@ -70,6 +117,19 @@ const UserChat = ({
         </div>
       </div>
       <div className="bg-slate-700 rounded-md  h-5/6 w-full flex flex-col  ">
+        {isEmojiPickerVisible && (
+          <div className="emoji-picker absolute bottom-24 flex flex-wrap w-96 gap-4 bg-slate-800 items-center  p-2 rounded-md mr-7 right-0 z-50">
+            {emojis.map((emoji, index) => (
+              <span
+                key={index}
+                onClick={() => handleEmojiClick(emoji)}
+                className="emoji"
+              >
+                {emoji}
+              </span>
+            ))}
+          </div>
+        )}
         <div className="w-full  pb-2 max-h-[90%] min-h-[90%] flex flex-col gap-y-2 justify-end ">
           <div
             ref={chatContainerRef}
@@ -108,6 +168,7 @@ const UserChat = ({
         </div>
 
         <div className="flex flex-row items-center justify-center  border-t-2 border-slate-500  p-2 h-[10%] gap-2">
+          <VoiceToTextButton onSpeechResult={handleSpeechResult} />
           <div className="w-full bg-slate-800 rounded-md h-full  text-white flex items-center ">
             <input
               onKeyPress={handleInputKeyPress}
@@ -120,6 +181,7 @@ const UserChat = ({
             <div className="flex flex-col items-center justify-center w-20">
               {" "}
               <FaSmile
+                onClick={toggleEmojiPicker}
                 size={20}
                 className="fill-slate-500 w-full hover:scale-125 transition ease-in-out hover:fill-yellow-500 "
               />
