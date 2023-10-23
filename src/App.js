@@ -80,29 +80,29 @@ export default function App() {
       }
     }
 
-    function onRoomMessageReceived({ sender, receiver, message }) {
-      console.log("got room message");
-      setChatRoomHistory((prevHistory) => [
-        ...prevHistory,
-        { sender, receiver, message },
-      ]);
-    }
+    // function onRoomMessageReceived({ sender, receiver, message }) {
+    //   console.log("got room message");
+    //   setChatRoomHistory((prevHistory) => [
+    //     ...prevHistory,
+    //     { sender, receiver, message },
+    //   ]);
+    // }
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("foo", onFooEvent);
     socket.on("userList", updateUserList);
     socket.on("message", onMessageReceived);
-    socket.on("roomMessage", onRoomMessageReceived);
+    // socket.on("roomMessage", onRoomMessageReceived);
     socket.on("chatHistory", (data) => {
       const { sender, receiver, history } = data;
 
       setChatHistory(history);
     });
     socket.on("chatRoomList", updateChatRoomList);
-    socket.on("chatRoomHistory", (data) => {
-      const { roomName, history } = data;
-      setChatRoomHistory(history);
-    });
+    // socket.on("chatRoomHistory", (data) => {
+    //   const { roomName, history } = data;
+    //   setChatRoomHistory(history);
+    // });
 
     return () => {
       socket.off("connect", onConnect);
@@ -111,8 +111,8 @@ export default function App() {
       socket.off("userList", updateUserList);
       socket.off("message", onMessageReceived);
       socket.off("chatHistory");
-      socket.off("chatRoomHistory");
-      socket.off("roomMessage", onMessageReceived);
+      // socket.off("chatRoomHistory");
+      // socket.off("roomMessage", onMessageReceived);
       socket.off("chatRoomList", updateChatRoomList);
     };
   }, [
@@ -172,10 +172,10 @@ export default function App() {
     setSelectedRoom(roomName);
     setSelectedUser();
     setChatRoomHistory([]);
-    setUserOrRoomSelected("room");
-    if (roomName) {
-      socket.emit("getChatRoomHistory", roomName);
-    }
+    // setUserOrRoomSelected("room");
+    // if (roomName) {
+    //   socket.emit("getChatRoomHistory", roomName);
+    // }
   }
 
   function handleSendOwnMessage(chatHistory) {
