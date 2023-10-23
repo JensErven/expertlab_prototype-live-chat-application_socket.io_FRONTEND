@@ -2,7 +2,13 @@ import React from "react";
 import { FaPlus, FaSearch } from "react-icons/fa";
 import RoomCard from "./RoomCard";
 
-const RoomList = ({ setIsModalOpen, chatRoomsList }) => {
+const RoomList = ({
+  setIsModalOpen,
+  chatRoomsList,
+  registeredUser,
+  setSelectedRoom,
+  selectedRoom,
+}) => {
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -31,7 +37,13 @@ const RoomList = ({ setIsModalOpen, chatRoomsList }) => {
       </div>
       <div className="flex flex-col gap-2 overflow-y-scroll ">
         {chatRoomsList.map((room) => (
-          <RoomCard room={room} key={room.roomName} />
+          <RoomCard
+            room={room}
+            key={room.roomName}
+            registeredUser={registeredUser}
+            setSelectedRoom={setSelectedRoom}
+            selectedRoom={selectedRoom}
+          />
         ))}
       </div>
     </div>

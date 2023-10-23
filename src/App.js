@@ -9,6 +9,7 @@ import "./tailwind.css";
 import "./App.css";
 import SignoutButton from "./components/shared/SignoutButton";
 import UserChat from "./components/users/UserChat";
+import RoomChat from "./components/rooms/RoomChat";
 import messageReceivedSound from "./assets/new-positive-notice-161930.mp3";
 import CreateRoomModal from "./components/rooms/CreateRoomModal";
 
@@ -21,14 +22,13 @@ export default function App() {
   const [chatRoomsList, setChatRoomsList] = useState([]);
   const [selectedUser, setSelectedUser] = useState();
   const [chatHistory, setChatHistory] = useState([]);
-  const [userOrRoomSelected, setUserOrRoomSelected] = useState("user");
+  const [userOrRoomSelected, setUserOrRoomSelected] = useState("");
   const [unreadMessages, setUnreadMessages] = useState({}); // State for unread message counts
   const messageReceivedAudio = new Audio(messageReceivedSound);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect(() => {
-    console.log(chatHistory);
-  }, [chatHistory]);
+  //rooms
+  const [selectedRoom, setSelectedRoom] = useState();
+  const [chatRoomHistory, setChatRoomHistory] = useState([]);
 
   useEffect(() => {
     function onConnect() {
@@ -79,17 +79,30 @@ export default function App() {
         messageReceivedAudio.play();
       }
     }
+
+    function onRoomMessageReceived({ sender, receiver, message }) {
+      console.log("got room message");
+      setChatRoomHistory((prevHistory) => [
+        ...prevHistory,
+        { sender, receiver, message },
+      ]);
+    }
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("foo", onFooEvent);
     socket.on("userList", updateUserList);
     socket.on("message", onMessageReceived);
+    socket.on("roomMessage", onRoomMessageReceived);
     socket.on("chatHistory", (data) => {
       const { sender, receiver, history } = data;
 
       setChatHistory(history);
     });
     socket.on("chatRoomList", updateChatRoomList);
+    socket.on("chatRoomHistory", (data) => {
+      const { roomName, history } = data;
+      setChatRoomHistory(history);
+    });
 
     return () => {
       socket.off("connect", onConnect);
@@ -98,6 +111,8 @@ export default function App() {
       socket.off("userList", updateUserList);
       socket.off("message", onMessageReceived);
       socket.off("chatHistory");
+      socket.off("chatRoomHistory");
+      socket.off("roomMessage", onMessageReceived);
       socket.off("chatRoomList", updateChatRoomList);
     };
   }, [
@@ -118,6 +133,7 @@ export default function App() {
     socket.once("registrationResponse", (response) => {
       if (response.success) {
         // Registration was successful
+        console.log(username);
         setRegisteredUser(username);
         setShowChat(true); // Show the chat interface
       } else {
@@ -131,7 +147,8 @@ export default function App() {
     console.log(user);
     setSelectedUser(user);
     setChatHistory([]);
-
+    setUserOrRoomSelected("user");
+    setSelectedRoom();
     // Check if there are unread messages for the selected user
     if (unreadMessages[user]) {
       // Reset the unread message count to 0 for the selected user
@@ -148,6 +165,17 @@ export default function App() {
 
     // // Request chat history
     // socket.emit("loadChatHistory", { sender: registeredUser, receiver: user });
+  }
+
+  function handleSetSelectedRoom(roomName) {
+    console.log(roomName);
+    setSelectedRoom(roomName);
+    setSelectedUser();
+    setChatRoomHistory([]);
+    setUserOrRoomSelected("room");
+    if (roomName) {
+      socket.emit("getChatRoomHistory", roomName);
+    }
   }
 
   function handleSendOwnMessage(chatHistory) {
@@ -184,30 +212,26 @@ export default function App() {
               selectedUser={selectedUser}
               unreadMessages={unreadMessages}
               setIsModalOpen={setIsModalOpen}
+              setSelectedRoom={handleSetSelectedRoom}
+              selectedRoom={selectedRoom}
             />
-          </div>
-          {
-            /*selectedRoom || */ selectedUser ? (
-              <>
-                {" "}
-                {userOrRoomSelected === "user" ? (
-                  <UserChat
-                    selectedUser={selectedUser}
-                    registeredUser={registeredUser}
-                    setChatHistory={handleSendOwnMessage}
-                    chatHistory={chatHistory}
-                  />
-                ) : (
-                  <></>
-                  // <ChatRoom selectedRoom={selectedRoom} />
-                )}
-              </>
-            ) : (
-              <></>
-            )
-          }
+          </div>{" "}
+          {userOrRoomSelected === "user" && (
+            <UserChat
+              selectedUser={selectedUser}
+              registeredUser={registeredUser}
+              setChatHistory={handleSendOwnMessage}
+              chatHistory={chatHistory}
+            />
+          )}
+          {userOrRoomSelected === "room" && selectedRoom ? (
+            <RoomChat
+              selectedRoom={selectedRoom}
+              registeredUser={registeredUser}
+              chatHistory={chatRoomHistory}
+            />
+          ) : null}
           <Events events={fooEvents} />
-
           {/* Pass registeredUser as a prop to the chat components */}
         </div>
       ) : (

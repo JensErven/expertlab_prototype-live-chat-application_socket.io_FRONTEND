@@ -117,23 +117,23 @@ const UserChat = ({
         </div>
       </div>
       <div className="bg-slate-700 rounded-md  h-5/6 w-full flex flex-col  ">
-        {isEmojiPickerVisible && (
-          <div className="emoji-picker absolute bottom-24 flex flex-wrap w-96 gap-4 bg-slate-800 items-center  p-2 rounded-md mr-7 right-0 z-50">
-            {emojis.map((emoji, index) => (
-              <span
-                key={index}
-                onClick={() => handleEmojiClick(emoji)}
-                className="emoji"
-              >
-                {emoji}
-              </span>
-            ))}
-          </div>
-        )}
-        <div className="w-full  pb-2 max-h-[90%] min-h-[90%] flex flex-col gap-y-2 justify-end ">
+        <div className="w-full  pb-2 max-h-[90%] min-h-[90%] flex flex-col gap-y-2 justify-end relative ">
+          {isEmojiPickerVisible && (
+            <div className="emoji-picker absolute  flex flex-wrap w-[75%] right-2 gap-4 bg-slate-800 items-center  p-4  rounded-md z-50">
+              {emojis.map((emoji, index) => (
+                <span
+                  key={index}
+                  onClick={() => handleEmojiClick(emoji)}
+                  className="emoji cursor-pointer hover:scale-150 ease-in-out"
+                >
+                  {emoji}
+                </span>
+              ))}
+            </div>
+          )}
           <div
             ref={chatContainerRef}
-            className="overflow-y-scroll w-full flex flex-col p-2 gap-y-1  "
+            className="overflow-y-scroll w-full flex flex-col p-2 gap-y-1 "
           >
             {chatHistoryForSelectedChat.map((message, index) => (
               <div
